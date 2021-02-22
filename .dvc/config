@@ -1,0 +1,5 @@
+[core]
+    remote = origin
+    check_update = false
+['remote "origin"']
+    url = gdrive://1VJbmmmZH4PQbDbEQXVO9ndTE_pGsRiNN
