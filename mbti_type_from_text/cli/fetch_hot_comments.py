@@ -14,7 +14,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--subreddit", type=str, required=True, help="Name of the subreddit from which hot comments will be fetched"
     )
-    parser.add_argument("--submission_flairs", nargs="+", help="List of flairs to select", required=True)
+    parser.add_argument("--submission_flairs", nargs="+", help="List of flairs to select", required=False)
     parser.add_argument("--n_hot", type=int, required=True, help="Number of hot submissions to fetch")
     parser.add_argument("--reddit_client_id", type=str, required=True, help="Client ID to use with Reddit's API")
     parser.add_argument(
@@ -32,8 +32,12 @@ if __name__ == "__main__":
         client_secret=args.reddit_client_secret,
     )
 
-    logger.info("Start iterating over submissions")
+    logger.info("Start iterating over {} hot submissions of subreddit '{}'".format(args.n_hot, args.subreddit))
     for n, submission in enumerate(reddit.subreddit(args.subreddit).hot(limit=args.n_hot)):
-        if submission.is_self and submission.num_comments > 0 and submission.link_flair_text in args.submission_flairs:
+        if (
+            submission.is_self
+            and submission.num_comments > 0
+            and (submission.link_flair_text is None or submission.link_flair_text in args.submission_flairs)
+        ):
             logger.info("Handle submission '{}' ({}/{})".format(submission.title, n + 1, args.n_hot))
             insert_or_update_submission(submission=submission, db_connection=db_connection)
