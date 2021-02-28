@@ -33,7 +33,9 @@ def insert_or_update_user(user_id, user_name, user_flair_text, db_connection):
     ON CONFLICT (id) 
     DO UPDATE SET flair_text='{user_flair_text}' 
     WHERE id = '{user_id}' AND (flair_text IS NULL OR flair_text = '')
-    """.format(user_id=user_id, user_name=user_name, user_flair_text=user_flair_text)
+    """.format(
+        user_id=user_id, user_name=user_name, user_flair_text=user_flair_text
+    )
     execute_query(query=query, db_connection=db_connection)
 
 
@@ -69,7 +71,7 @@ def insert_or_update_comment(
         comment_content=comment_content.replace("'", "''"),
         comment_created_datetime=format_date_for_db(created_utc=comment_created_utc),
         comment_upvotes=comment_upvotes,
-        subreddit_display_name=subreddit_display_name
+        subreddit_display_name=subreddit_display_name,
     )
     execute_query(query=query, db_connection=db_connection)
 
@@ -77,14 +79,16 @@ def insert_or_update_comment(
 def insert_or_update_comment_forest(comments, parent_id, db_connection):
     for comment in comments:
         if isinstance(comment, MoreComments):
-            insert_or_update_comment_forest(comments=comment.comments(), parent_id=parent_id, db_connection=db_connection)
+            insert_or_update_comment_forest(
+                comments=comment.comments(), parent_id=parent_id, db_connection=db_connection
+            )
         else:
             if comment.author is not None and hasattr(comment.author, "id"):
                 insert_or_update_user(
                     user_id=comment.author.id,
                     user_name=comment.author.name,
                     user_flair_text=comment.author_flair_text if comment.author_flair_text is not None else "",
-                    db_connection=db_connection
+                    db_connection=db_connection,
                 )
                 insert_or_update_comment(
                     comment_id=comment.id,
@@ -110,7 +114,7 @@ def insert_or_update_submission(submission, db_connection):
             user_id=submission.author.id,
             user_name=submission.author.name,
             user_flair_text=submission.author_flair_text if submission.author_flair_text is not None else "",
-            db_connection=db_connection
+            db_connection=db_connection,
         )
         insert_or_update_comment(
             comment_id=submission.id,

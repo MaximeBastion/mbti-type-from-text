@@ -15,6 +15,11 @@ conda activate mbti-type-from-text
 pip install -r requirements.txt
 ```
 
+4. If you are a developer, enable automatic code formatting with:
+```
+pre-commit install
+```
+
 ## Download data
 This project uses [DVC](https://dvc.org/) to manage data. The data is stored on a Google Drive remote. You need to ask for access.
 

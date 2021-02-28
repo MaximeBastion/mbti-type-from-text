@@ -9,18 +9,8 @@ logger = logging.getLogger(name="create_db")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--script_path",
-        type=str,
-        required=True,
-        help="Path to a SQL file to initialize the database"
-    )
-    parser.add_argument(
-        "--db_path",
-        type=str,
-        required=True,
-        help="Path to where the database file will be saved"
-    )
+    parser.add_argument("--script_path", type=str, required=True, help="Path to a SQL file to initialize the database")
+    parser.add_argument("--db_path", type=str, required=True, help="Path to where the database file will be saved")
     args = parser.parse_args()
 
     if os.path.exists(args.db_path):
