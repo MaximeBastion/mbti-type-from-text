@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS "Comments" (
 	"content"	TEXT NOT NULL,
 	"created_datetime"	TEXT NOT NULL,
 	"upvotes"	INTEGER NOT NULL,
+	"subreddit" TEXT NOT NULL,
 	PRIMARY KEY("id"),
 	FOREIGN KEY("user_id") REFERENCES "Users"("id"),
 	FOREIGN KEY("parent_comment_id") REFERENCES "Comments"("id")
