@@ -3,6 +3,7 @@ import sqlite3
 from datetime import datetime
 
 from praw.models import MoreComments
+from prawcore import NotFound
 
 logger = logging.getLogger(name="db_utils")
 
@@ -76,6 +77,17 @@ def insert_or_update_comment(
     execute_query(query=query, db_connection=db_connection)
 
 
+def is_user_defined(user):
+    if user is None:
+        return False
+    else:
+        try:
+            hasattr(user, "id")
+        except NotFound as e:
+            return False
+        return hasattr(user, "id")
+
+
 def insert_or_update_comment_forest(comments, parent_id, db_connection):
     for comment in comments:
         if isinstance(comment, MoreComments):
@@ -83,7 +95,7 @@ def insert_or_update_comment_forest(comments, parent_id, db_connection):
                 comments=comment.comments(), parent_id=parent_id, db_connection=db_connection
             )
         else:
-            if comment.author is not None and hasattr(comment.author, "id"):
+            if is_user_defined(user=comment.author):
                 insert_or_update_user(
                     user_id=comment.author.id,
                     user_name=comment.author.name,
@@ -109,7 +121,7 @@ def insert_or_update_comment_forest(comments, parent_id, db_connection):
 
 
 def insert_or_update_submission(submission, db_connection):
-    if submission.author is not None and hasattr(submission.author, "id"):
+    if is_user_defined(user=submission.author):
         insert_or_update_user(
             user_id=submission.author.id,
             user_name=submission.author.name,
