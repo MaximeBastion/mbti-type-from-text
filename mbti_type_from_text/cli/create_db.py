@@ -4,6 +4,7 @@ import os
 
 from mbti_type_from_text.db_utils import create_connection, execute_sql_script
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(name="create_db")
 
 if __name__ == "__main__":
