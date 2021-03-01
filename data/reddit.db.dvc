@@ -1,0 +1,4 @@
+outs:
+- md5: dc91469e50319e27d19293f7f84bcf78
+  size: 7847936
+  path: reddit.db

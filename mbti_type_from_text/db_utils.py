@@ -35,7 +35,7 @@ def insert_or_update_user(user_id, user_name, user_flair_text, db_connection):
     DO UPDATE SET flair_text='{user_flair_text}' 
     WHERE id = '{user_id}' AND (flair_text IS NULL OR flair_text = '')
     """.format(
-        user_id=user_id, user_name=user_name, user_flair_text=user_flair_text
+        user_id=user_id, user_name=user_name.replace("'", "''"), user_flair_text=user_flair_text.replace("'", "''")
     )
     execute_query(query=query, db_connection=db_connection)
 
@@ -72,7 +72,7 @@ def insert_or_update_comment(
         comment_content=comment_content.replace("'", "''"),
         comment_created_datetime=format_date_for_db(created_utc=comment_created_utc),
         comment_upvotes=comment_upvotes,
-        subreddit_display_name=subreddit_display_name,
+        subreddit_display_name=subreddit_display_name.replace("'", "''"),
     )
     execute_query(query=query, db_connection=db_connection)
 
