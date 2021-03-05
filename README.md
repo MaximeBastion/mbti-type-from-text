@@ -1,8 +1,8 @@
 # mbti-type-from-text
 ## Installation
-1. Create an Anaconda environment with Python 3.9:
+1. Create an Anaconda environment with Python 3.8:
 ```
-conda create --name mbti-type-from-text python=3.9
+conda create --name mbti-type-from-text python=3.8
 ```
 
 2. Activate the environment:
