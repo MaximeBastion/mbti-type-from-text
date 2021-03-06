@@ -2,6 +2,7 @@ import logging
 import sqlite3
 from datetime import datetime
 
+import pandas as pd
 from praw.models import MoreComments
 from prawcore import NotFound
 
@@ -147,8 +148,36 @@ def insert_or_update_submission(submission, db_connection):
 
 
 def get_all_user_names(db_connection):
-    return []
+    return pd.read_sql("SELECT name FROM Users", con=db_connection)["name"].tolist()
 
 
-def insert_or_update_user_comments(user, db_connection):
-    logger.info("Handle user '{}' (id='{}')".format(user.name, user.id))
+def insert_or_update_user_submissions(user, n_hot, db_connection):
+    for n, submission in enumerate(user.submissions.hot(limit=n_hot)):
+        logger.info("Submission {}/{} of user '{}'".format(n + 1, n_hot, user.name))
+        insert_or_update_comment(
+            comment_id=submission.id,
+            comment_user_id=submission.author.id,
+            comment_parent_id="",
+            comment_title=submission.title,
+            comment_content=submission.selftext,
+            comment_created_utc=submission.created_utc,
+            comment_upvotes=submission.score,
+            subreddit_display_name=submission.subreddit.display_name,
+            db_connection=db_connection,
+        )
+
+
+def insert_or_update_user_comments(user, n_hot, db_connection):
+    for n, comment in enumerate(user.comments.hot(limit=n_hot)):
+        logger.info("Comment {}/{} of user '{}'".format(n + 1, n_hot, user.name))
+        insert_or_update_comment(
+            comment_id=comment.id,
+            comment_user_id=comment.author.id,
+            comment_parent_id=comment.parent().id,
+            comment_title="",
+            comment_content=comment.body,
+            comment_created_utc=comment.created_utc,
+            comment_upvotes=comment.score,
+            subreddit_display_name=comment.subreddit.display_name,
+            db_connection=db_connection,
+        )
