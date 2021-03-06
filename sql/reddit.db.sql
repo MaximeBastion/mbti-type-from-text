@@ -2,12 +2,14 @@ BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS "Comments" (
 	"id"	TEXT NOT NULL UNIQUE,
 	"user_id" TEXT NOT NULL,
+	"parent_submission_id" TEXT,
 	"parent_comment_id"	TEXT,
 	"title"	TEXT,
 	"content"	TEXT NOT NULL,
 	"created_datetime"	TEXT NOT NULL,
 	"upvotes"	INTEGER NOT NULL,
 	"subreddit" TEXT NOT NULL,
+	"submission_flair_text" TEXT,
 	PRIMARY KEY("id"),
 	FOREIGN KEY("user_id") REFERENCES "Users"("id"),
 	FOREIGN KEY("parent_comment_id") REFERENCES "Comments"("id")
