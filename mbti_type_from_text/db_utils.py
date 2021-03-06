@@ -36,8 +36,11 @@ def insert_or_update_user(user_id, user_name, user_flair_text, db_connection):
     DO UPDATE SET flair_text='{user_flair_text}' 
     WHERE id = '{user_id}' AND (flair_text IS NULL OR flair_text = '')
     """.format(
-        user_id=user_id, user_name=user_name.replace("'", "''"), user_flair_text=user_flair_text.replace("'", "''")
+        user_id=user_id,
+        user_name=user_name.replace("'", "''"),
+        user_flair_text=user_flair_text.replace("'", "''") if user_flair_text is not None else "<<NULL>>",
     )
+    query = query.replace("'<<NULL>>'", "NULL")
     execute_query(query=query, db_connection=db_connection)
 
 
@@ -71,17 +74,17 @@ def insert_or_update_comment(
         comment_id=comment_id,
         comment_user_id=comment_user_id,
         parent_submission_id=parent_submission_id,
-        parent_comment_id=parent_comment_id if parent_comment_id is not None else "NULL",
-        comment_title=comment_title.replace("'", "''") if comment_title is not None else "NULL",
+        parent_comment_id=parent_comment_id if parent_comment_id is not None else "<<NULL>>",
+        comment_title=comment_title.replace("'", "''") if comment_title is not None else "<<NULL>>",
         comment_content=comment_content.replace("'", "''"),
         comment_created_datetime=format_date_for_db(created_utc=comment_created_utc),
         comment_upvotes=comment_upvotes,
         subreddit_display_name=subreddit_display_name.replace("'", "''"),
         submission_flair_text=submission_flair_text.replace("'", "''")
         if submission_flair_text is not None and submission_flair_text != ""
-        else "NULL",
+        else "<<NULL>>",
     )
-    query = query.replace("'NULL'", "NULL")
+    query = query.replace("'<<NULL>>'", "NULL")
     execute_query(query=query, db_connection=db_connection)
 
 
@@ -107,7 +110,7 @@ def insert_or_update_comment_forest(comments, parent_id, db_connection):
                 insert_or_update_user(
                     user_id=comment.author.id,
                     user_name=comment.author.name,
-                    user_flair_text=comment.author_flair_text if comment.author_flair_text is not None else "",
+                    user_flair_text=comment.author_flair_text if comment.author_flair_text is not None else None,
                     db_connection=db_connection,
                 )
                 insert_or_update_comment(
@@ -136,7 +139,7 @@ def insert_or_update_submission(submission, db_connection):
         insert_or_update_user(
             user_id=submission.author.id,
             user_name=submission.author.name,
-            user_flair_text=submission.author_flair_text if submission.author_flair_text is not None else "",
+            user_flair_text=submission.author_flair_text if submission.author_flair_text is not None else None,
             db_connection=db_connection,
         )
         insert_or_update_comment(
