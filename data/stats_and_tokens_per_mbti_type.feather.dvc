@@ -1,0 +1,4 @@
+outs:
+- md5: 2a1c0c12efe23a8d27ba06c489cf664e
+  size: 3178938
+  path: stats_and_tokens_per_mbti_type.feather

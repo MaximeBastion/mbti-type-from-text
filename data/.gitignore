@@ -1,2 +1,5 @@
 /mbti.csv
 /reddit.db
+/users_df_with_mbti_type.feather
+/stats_and_tokens_per_user.feather
+/stats_and_tokens_per_mbti_type.feather

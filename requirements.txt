@@ -26,6 +26,7 @@ distro==1.5.0
 dpath==2.0.1
 dulwich==0.20.19
 dvc==1.11.16
+emot==2.1
 entrypoints==0.3
 filelock==3.0.12
 flatbuffers==1.12
@@ -106,6 +107,7 @@ prometheus-client==0.9.0
 prompt-toolkit==3.0.16
 protobuf==3.15.1
 ptyprocess==0.7.0
+pyarrow==3.0.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.20
@@ -122,6 +124,8 @@ python-dateutil==2.8.1
 python-fsutil==0.4.0
 python-slugify==4.0.1
 pytz==2021.1
+pywin32==300
+pywinpty==0.5.7
 PyYAML==5.4.1
 pyzmq==22.0.3
 qtconsole==5.0.2
@@ -170,6 +174,8 @@ webencodings==0.5.1
 websocket-client==0.57.0
 Werkzeug==1.0.1
 widgetsnbextension==3.5.1
+win-unicode-console==0.5
+wincertstore==0.2
 wrapt==1.12.1
 xmltodict==0.12.0
 zc.lockfile==2.0
