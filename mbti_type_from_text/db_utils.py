@@ -68,7 +68,7 @@ def insert_or_update_comment(
     INSERT INTO Comments (id, user_id, parent_submission_id, parent_comment_id, title, content, created_datetime, upvotes, subreddit, submission_flair_text) 
     VALUES ('{comment_id}', '{comment_user_id}', '{parent_submission_id}', '{parent_comment_id}', '{comment_title}', '{comment_content}', '{comment_created_datetime}', {comment_upvotes}, '{subreddit_display_name}', '{submission_flair_text}') 
     ON CONFLICT (id) 
-    DO UPDATE SET title = '{comment_title}', content = '{comment_content}', created_datetime = '{comment_created_datetime}', upvotes = {comment_upvotes} 
+    DO UPDATE SET parent_comment_id = '{parent_comment_id}', title = '{comment_title}', content = '{comment_content}', created_datetime = '{comment_created_datetime}', upvotes = {comment_upvotes} 
     WHERE id = '{comment_id}'
     """.format(
         comment_id=comment_id,
@@ -106,7 +106,9 @@ def insert_or_update_comment_forest(comments, parent_id, db_connection):
                 comments=comment.comments(), parent_id=parent_id, db_connection=db_connection
             )
         else:
+            new_parent_id = None
             if is_user_defined(user=comment.author):
+                new_parent_id = comment.id
                 insert_or_update_user(
                     user_id=comment.author.id,
                     user_name=comment.author.name,
@@ -130,7 +132,9 @@ def insert_or_update_comment_forest(comments, parent_id, db_connection):
                 logger.warning("Comment without author (id='{}', parent_id='{}')".format(comment.id, parent_id))
             assert hasattr(comment, "id") and comment.id is not None
             assert hasattr(comment, "replies") and comment.replies is not None
-            insert_or_update_comment_forest(comments=comment.replies, parent_id=comment.id, db_connection=db_connection)
+            insert_or_update_comment_forest(
+                comments=comment.replies, parent_id=new_parent_id, db_connection=db_connection
+            )
 
 
 def insert_or_update_submission(submission, db_connection):
