@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -e
 
-if [ $# -ne 2 ]; then
-  echo "Expected 2 input arguments: bash bash_scripts/fetch_hot_comments.sh <REDDIT_CLIENT_ID> <REDDIT_CLIENT_SECRET>"
+if [ $# -ne 3 ]; then
+  echo "Expected 3 input arguments: bash bash_scripts/fetch_hot_comments.sh <DB_PATH> <REDDIT_CLIENT_ID> <REDDIT_CLIENT_SECRET>"
   exit 1
 fi
 
-DB_PATH=data/reddit.db
-REDDIT_CLIENT_ID=$1
-REDDIT_CLIENT_SECRET=$2
+DB_PATH=$1
+REDDIT_CLIENT_ID=$2
+REDDIT_CLIENT_SECRET=$3
 
 # https://www.reddit.com/r/infj/
 python mbti_type_from_text/cli/fetch_hot_comments.py \
