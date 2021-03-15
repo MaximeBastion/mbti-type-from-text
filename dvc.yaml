@@ -1,0 +1,14 @@
+stages:
+  db_to_feather:
+    vars:
+    - db_path: data/raw/reddit.db
+    - users_feather_path: data/processed/users.feather
+    - comments_feather_path: data/processed/comments.feather
+    cmd: python mbti_type_from_text/cli/dvc_stages/db_to_feather.py --db_path ${db_path}
+      --users_feather_path ${users_feather_path} --comments_feather_path ${comments_feather_path}
+    deps:
+    - ${db_path}
+    - mbti_type_from_text/cli/dvc_stages/db_to_feather.py
+    outs:
+    - ${users_feather_path}
+    - ${comments_feather_path}

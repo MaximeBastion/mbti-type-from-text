@@ -1,0 +1,19 @@
+schema: '2.0'
+stages:
+  db_to_feather:
+    cmd: python mbti_type_from_text/cli/dvc_stages/db_to_feather.py --db_path data/raw/reddit.db
+      --users_feather_path data/processed/users.feather --comments_feather_path data/processed/comments.feather
+    deps:
+    - path: data/raw/reddit.db
+      md5: 1f663fe7c5d9920c814ce68c49471015
+      size: 21819392
+    - path: mbti_type_from_text/cli/dvc_stages/db_to_feather.py
+      md5: 000195f2f1cefeaee41b65d016d295fa
+      size: 1415
+    outs:
+    - path: data/processed/comments.feather
+      md5: aaa7a2a5f437064b978d4370860f68c7
+      size: 10126162
+    - path: data/processed/users.feather
+      md5: 4de90b62e9178623539faf33f9f1076b
+      size: 289682
