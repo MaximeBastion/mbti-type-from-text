@@ -1,8 +1,9 @@
 schema: '2.0'
 stages:
   db_to_feather:
-    cmd: python mbti_type_from_text/cli/dvc_stages/db_to_feather.py --db_path data/raw/reddit.db
-      --users_feather_path data/processed/users.feather --comments_feather_path data/processed/comments.feather
+    cmd: "python mbti_type_from_text/cli/dvc_stages/db_to_feather.py --db_path data/raw/reddit.db\
+      \ --users_feather_path data/processed/users.feather --comments_feather_path\
+      \ data/processed/comments.feather\n"
     deps:
     - path: data/raw/reddit.db
       md5: 1f663fe7c5d9920c814ce68c49471015
@@ -17,3 +18,21 @@ stages:
     - path: data/processed/users.feather
       md5: 4de90b62e9178623539faf33f9f1076b
       size: 289682
+  extract_mbti:
+    cmd: "python mbti_type_from_text/cli/dvc_stages/extract_mbti.py --users_feather_path\
+      \ data/processed/users.feather --comments_feather_path data/processed/comments.feather\
+      \ --users_mbti_feather_path data/processed/mbti_per_user.feather\n"
+    deps:
+    - path: data/processed/comments.feather
+      md5: aaa7a2a5f437064b978d4370860f68c7
+      size: 10126162
+    - path: data/processed/users.feather
+      md5: 4de90b62e9178623539faf33f9f1076b
+      size: 289682
+    - path: mbti_type_from_text/cli/dvc_stages/extract_mbti.py
+      md5: 6812700c9cc63695e6d097be3cd7cc98
+      size: 5656
+    outs:
+    - path: data/processed/mbti_per_user.feather
+      md5: a41483b0b957c4f6a7c1e85648df9e13
+      size: 134098
