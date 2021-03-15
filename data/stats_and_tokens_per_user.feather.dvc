@@ -1,4 +1,0 @@
-outs:
-- md5: c0e98622a97fd2d843bf34ddf701c322
-  size: 3419642
-  path: stats_and_tokens_per_user.feather
