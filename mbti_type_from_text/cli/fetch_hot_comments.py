@@ -37,7 +37,10 @@ if __name__ == "__main__":
         if (
             submission.is_self
             and submission.num_comments > 0
-            and (submission.link_flair_text is None or submission.link_flair_text in args.submission_flairs)
+            and (
+                submission.link_flair_text is None
+                or (args.submission_flairs is not None and submission.link_flair_text in args.submission_flairs)
+            )
         ):
             logger.info("Handle submission '{}' ({}/{})".format(submission.title, n + 1, args.n_hot))
             insert_or_update_submission(submission=submission, db_connection=db_connection)
