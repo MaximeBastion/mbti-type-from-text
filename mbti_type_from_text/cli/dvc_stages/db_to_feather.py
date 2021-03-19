@@ -1,9 +1,31 @@
 import logging
 from argparse import ArgumentParser
 
+import numpy as np
 import pandas as pd
 
 from mbti_type_from_text.db_utils import create_connection
+
+
+def preprocess_users(df):
+    # apparently, feather treats "NaN" as "None", converting back to "NaN"
+    df = df.fillna(np.nan)
+
+    return df
+
+
+def preprocess_comments(df):
+    # apparently, feather treats "NaN" as "None", converting back to "NaN"
+    df = df.fillna(np.nan)
+
+    # replaces field that's entirely space (or empty) with NaN
+    df["title"] = df.title.replace(r"^\s*$", np.nan, regex=True)
+
+    # Concatenate title and content
+    df["message"] = df["title"] + "\n" + df["content"]
+
+    return df
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
@@ -32,6 +54,11 @@ if __name__ == "__main__":
     users_df = pd.read_sql(sql="SELECT * FROM Users", con=db_connection)
     logger.info("Load comments from DB")
     comments_df = pd.read_sql(sql="SELECT * FROM Comments", con=db_connection)
+
+    logger.info("Preprocess users")
+    users_df = preprocess_users(df=users_df)
+    logger.info("Preprocess comments")
+    comments_df = preprocess_comments(df=comments_df)
 
     logger.info("Save users to '{}'".format(args.users_feather_path))
     users_df.to_feather(args.users_feather_path)
