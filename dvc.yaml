@@ -5,6 +5,7 @@ vars:
   - users_mbti_feather_path: data/processed/mbti_per_user.feather
   - stats_per_user_path: data/processed/stats_per_user.feather
   - tokens_per_user_path: data/processed/tokens_per_user.feather
+  - stats_per_user_umap_plot_path: plots/stats_per_user_umap.html
 
 stages:
   db_to_feather:
@@ -45,3 +46,15 @@ stages:
     outs:
       - ${stats_per_user_path}
       - ${tokens_per_user_path}
+  plot_statistics_per_user_with_umap:
+    cmd: >
+      python mbti_type_from_text/cli/dvc_stages/plot_statistics_per_user_with_umap.py
+      --stats_per_user_path ${stats_per_user_path}
+      --users_mbti_feather_path ${users_mbti_feather_path}
+      --plot_path ${stats_per_user_umap_plot_path}
+    deps:
+      - ${stats_per_user_path}
+      - ${users_mbti_feather_path}
+      - mbti_type_from_text/cli/dvc_stages/plot_statistics_per_user_with_umap.py
+    outs:
+      - ${stats_per_user_umap_plot_path}

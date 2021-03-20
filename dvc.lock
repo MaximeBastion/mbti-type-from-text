@@ -58,3 +58,21 @@ stages:
     - path: data/processed/tokens_per_user.feather
       md5: 4a9ade82dc7f462769948c43fce5c8aa
       size: 8569066
+  plot_statistics_per_user_with_umap:
+    cmd: "python mbti_type_from_text/cli/dvc_stages/plot_statistics_per_user_with_umap.py\
+      \ --stats_per_user_path data/processed/stats_per_user.feather --users_mbti_feather_path\
+      \ data/processed/mbti_per_user.feather --plot_path plots/stats_per_user_umap.html\n"
+    deps:
+    - path: data/processed/mbti_per_user.feather
+      md5: a41483b0b957c4f6a7c1e85648df9e13
+      size: 134098
+    - path: data/processed/stats_per_user.feather
+      md5: 9ed575547e066b581b837ab35a6aec82
+      size: 818450
+    - path: mbti_type_from_text/cli/dvc_stages/plot_statistics_per_user_with_umap.py
+      md5: db31f2eec096e0a5f6c4a54243b2ce5d
+      size: 2326
+    outs:
+    - path: plots/stats_per_user_umap.html
+      md5: de8d5bd26e88dc86616150fa7a97fa7c
+      size: 4066174
