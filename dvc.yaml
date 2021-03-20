@@ -3,6 +3,8 @@ vars:
   - users_feather_path: data/processed/users.feather
   - comments_feather_path: data/processed/comments.feather
   - users_mbti_feather_path: data/processed/mbti_per_user.feather
+  - stats_per_user_path: data/processed/stats_per_user.feather
+  - tokens_per_user_path: data/processed/tokens_per_user.feather
 
 stages:
   db_to_feather:
@@ -29,3 +31,17 @@ stages:
       - mbti_type_from_text/cli/dvc_stages/extract_mbti.py
     outs:
       - ${users_mbti_feather_path}
+  compute_statistics_and_tokens_per_user:
+    cmd: >
+      python  mbti_type_from_text/cli/dvc_stages/compute_statistics_and_tokens_per_user.py
+      --comments_feather_path ${comments_feather_path}
+      --users_mbti_feather_path ${users_mbti_feather_path}
+      --stats_per_user_path ${stats_per_user_path}
+      --tokens_per_user_path ${tokens_per_user_path}
+    deps:
+      - ${comments_feather_path}
+      - ${users_mbti_feather_path}
+      - mbti_type_from_text/cli/dvc_stages/compute_statistics_and_tokens_per_user.py
+    outs:
+      - ${stats_per_user_path}
+      - ${tokens_per_user_path}

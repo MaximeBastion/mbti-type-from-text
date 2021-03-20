@@ -4,14 +4,14 @@ from argparse import ArgumentParser
 
 import emot  # https://github.com/NeelShah18/emot
 import nltk
-import numpy as np
 import pandas as pd
 from nltk.tokenize import word_tokenize
 
 
 def group_messages_per_user(comments_df):
-    messages_per_user_df = comments_df.groupby("user_id").agg({"message": list}).rename(columns={"message": "messages"})
-    messages_per_user_df = messages_per_user_df[~messages_per_user_df["message_list"].isna()]
+    messages_per_user_df = (
+        comments_df.groupby("user_id").agg({"message": list}).rename(columns={"message": "message_list"})
+    )
     messages_per_user_df["messages"] = messages_per_user_df["message_list"].apply(lambda l: " ".join(l))
     return messages_per_user_df
 
@@ -19,19 +19,6 @@ def group_messages_per_user(comments_df):
 def compute_simple_messages_statistics(df):
     df["n_messages"] = df["message_list"].apply(len)
     df["character_count"] = df["messages"].apply(len)
-    return df
-
-
-def add_dichotomy_features(df, all_8: bool, as_int: bool = False, mbti_type_col: str = "mbti_type"):
-    """
-    all_8: add all 8 letters even though 4 of them already contains all the information
-    as_int: as int or bool?
-    """
-    wanter_letters = "ESTJINFP" if all_8 else "ESTJ"
-    for i, letter in enumerate(list(wanter_letters)):
-        df[f"is_{letter}"] = df[mbti_type_col].apply(lambda x: np.nan if pd.isna(x) else letter in x)
-        if as_int:
-            df[f"is_{letter}"] = df[f"is_{letter}"] * 1
     return df
 
 
@@ -141,10 +128,10 @@ def clean_and_count_all_items(df, regexes_dict: {str: str}, messages_col_name: s
 def compute_mean_statistics_per_message(df, messages_count_col: str, char_count_col: str, drop_count_cols: bool):
     for count_col in [c for c in df.columns if c.endswith("_count")]:
         mean_col_name = "{item}_message_mean".format(item=count_col[:-6])
-        df[mean_col_name] = df.apply(lambda row: row[count_col] / row[messages_count_col], axis=1)
+        df[mean_col_name] = df[count_col] / df[messages_count_col]
         if count_col != "character_count":  # mean char per char is not super useful
             mean_col_name = "{item}_char_mean".format(item=count_col[:-6])
-            df[mean_col_name] = df.apply(lambda row: row[count_col] / row[char_count_col], axis=1)
+            df[mean_col_name] = df[count_col] / df[char_count_col]
     if drop_count_cols:
         df = df[[c for c in df.columns if not c.endswith("_count") or c == "character_count"]]
     return df
@@ -192,10 +179,16 @@ if __name__ == "__main__":
         help="Path to the users MBTI profiles (in the feather format)",
     )
     parser.add_argument(
-        "--stats_and_tokens_per_user_path",
+        "--stats_per_user_path",
         type=str,
         required=True,
-        help="Path where the statistics and tokens per user will be saved (in the feather format)",
+        help="Path where the statistics per user will be saved (in the feather format)",
+    )
+    parser.add_argument(
+        "--tokens_per_user_path",
+        type=str,
+        required=True,
+        help="Path where the tokens per user will be saved (in the feather format)",
     )
     args = parser.parse_args()
 
@@ -211,16 +204,8 @@ if __name__ == "__main__":
     messages_per_user_df = compute_simple_messages_statistics(df=messages_per_user_df)
 
     logger.info("Map the messages to the user's MBTI type")
-    messages_per_user_df = messages_per_user_df.merge(
-        users_mbti_df[["id", "mbti_type"]].rename(columns={"id": "user_id"}),
-        how="left",
-        left_index=True,
-        right_on="user_id",
-    )
+    messages_per_user_df = messages_per_user_df.merge(users_mbti_df, how="left", left_index=True, right_on="user_id")
     messages_per_user_df = messages_per_user_df[["user_id", "mbti_type", "n_messages", "character_count", "messages"]]
-
-    logger.info("Add dichotomy features")
-    messages_per_user_df = add_dichotomy_features(df=messages_per_user_df, all_8=False, as_int=False)
 
     logger.info("Start counting and removing items")
     messages_per_user_df["messages_raw"] = messages_per_user_df["messages"]  # keeping a copy of the original messages
@@ -241,17 +226,15 @@ if __name__ == "__main__":
     messages_per_user_df = compute_token_statistics(df=messages_per_user_df, tokens_col_name="tokens")
 
     logger.info("Select the columns to keep")
-    dichotomies_columns = [c for c in messages_per_user_df.columns if c.startswith("is_")]
     simple_statistics = ["n_messages", "character_count"]
     mean_statistics_per_message_columns = [c for c in messages_per_user_df.columns if c.endswith("_mean")]
     columns_to_select = (
-        ["user_id", "mbti_type"]
-        + dichotomies_columns
-        + simple_statistics
-        + ["tokens"]
-        + mean_statistics_per_message_columns
+        ["user_id"] + simple_statistics + mean_statistics_per_message_columns + ["tokens_count", "unique_tokens_count"]
     )
-    stats_and_tokens_per_user_df = messages_per_user_df[columns_to_select].reset_index(drop=True)
+    stats_per_user_df = messages_per_user_df[columns_to_select].reset_index(drop=True)
+    tokens_per_user_df = messages_per_user_df[["user_id", "tokens"]].reset_index(drop=True)
 
-    logger.info("Save statistics and tokens per user to '{}'".format(args.stats_and_tokens_per_user_path))
-    stats_and_tokens_per_user_df.to_feather(args.stats_and_tokens_per_user_path)
+    logger.info("Save statistics per user to '{}'".format(args.stats_per_user_path))
+    stats_per_user_df.to_feather(args.stats_per_user_path)
+    logger.info("Save tokens per user to '{}'".format(args.tokens_per_user_path))
+    tokens_per_user_df.to_feather(args.tokens_per_user_path)
