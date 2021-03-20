@@ -70,8 +70,8 @@ stages:
       md5: 9ed575547e066b581b837ab35a6aec82
       size: 818450
     - path: mbti_type_from_text/cli/dvc_stages/plot_statistics_per_user_with_umap.py
-      md5: db31f2eec096e0a5f6c4a54243b2ce5d
-      size: 2326
+      md5: 1f0c7ae5f5246a1d246164ff0b0a6cf6
+      size: 2340
     outs:
     - path: plots/stats_per_user_umap.html
       md5: de8d5bd26e88dc86616150fa7a97fa7c
