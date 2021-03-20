@@ -1,28 +1,21 @@
 import logging
 from argparse import ArgumentParser
 
-import numpy as np
 import pandas as pd
 
 from mbti_type_from_text.db_utils import create_connection
 
 
 def preprocess_users(df):
-    # apparently, feather treats "NaN" as "None", converting back to "NaN"
-    df = df.fillna(np.nan)
-
     return df
 
 
 def preprocess_comments(df):
-    # apparently, feather treats "NaN" as "None", converting back to "NaN"
-    df = df.fillna(np.nan)
-
-    # replaces field that's entirely space (or empty) with NaN
-    df["title"] = df.title.replace(r"^\s*$", np.nan, regex=True)
-
     # Concatenate title and content
-    df["message"] = df["title"] + "\n" + df["content"]
+    is_title_undefined_selector = df["title"].isna()
+    df["message"] = None
+    df.loc[is_title_undefined_selector, "message"] = df["content"]
+    df.loc[~is_title_undefined_selector, "message"] = df["title"] + "\n" + df["content"]
 
     return df
 

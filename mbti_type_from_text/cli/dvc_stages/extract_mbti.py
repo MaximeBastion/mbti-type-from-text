@@ -39,12 +39,7 @@ def extract_mbti_from_messages(df):
     result_df = pd.DataFrame()
     result_df["user_id"] = df["user_id"]
     for regex_name, regex_item in regex_dict.items():
-        result_df["{}__on__title".format(regex_name)] = df["title"].str.extract(regex_item["regex"])[
-            regex_item["group_index"]
-        ]
-        result_df["{}__on__content".format(regex_name)] = df["content"].str.extract(regex_item["regex"])[
-            regex_item["group_index"]
-        ]
+        result_df[regex_name] = df["message"].str.extract(regex_item["regex"])[regex_item["group_index"]]
     return result_df
 
 

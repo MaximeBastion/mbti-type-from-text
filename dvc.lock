@@ -9,12 +9,12 @@ stages:
       md5: 1f663fe7c5d9920c814ce68c49471015
       size: 21819392
     - path: mbti_type_from_text/cli/dvc_stages/db_to_feather.py
-      md5: 000195f2f1cefeaee41b65d016d295fa
-      size: 1415
+      md5: c376ac1c3e40463d63d1b1f1ee2447b8
+      size: 1949
     outs:
     - path: data/processed/comments.feather
-      md5: aaa7a2a5f437064b978d4370860f68c7
-      size: 10126162
+      md5: 74de9c4e06b4ae2f7b8afbb453bc3079
+      size: 18188026
     - path: data/processed/users.feather
       md5: 4de90b62e9178623539faf33f9f1076b
       size: 289682
@@ -24,14 +24,14 @@ stages:
       \ --users_mbti_feather_path data/processed/mbti_per_user.feather\n"
     deps:
     - path: data/processed/comments.feather
-      md5: aaa7a2a5f437064b978d4370860f68c7
-      size: 10126162
+      md5: 74de9c4e06b4ae2f7b8afbb453bc3079
+      size: 18188026
     - path: data/processed/users.feather
       md5: 4de90b62e9178623539faf33f9f1076b
       size: 289682
     - path: mbti_type_from_text/cli/dvc_stages/extract_mbti.py
-      md5: 6812700c9cc63695e6d097be3cd7cc98
-      size: 5656
+      md5: 314657b117b86325a8c1f8a32eb2109a
+      size: 5458
     outs:
     - path: data/processed/mbti_per_user.feather
       md5: a41483b0b957c4f6a7c1e85648df9e13
