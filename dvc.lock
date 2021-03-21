@@ -72,3 +72,65 @@ stages:
     - path: plots/stats_per_user_umap.html
       md5: 63bf9b795d75effeff8936a5126741b8
       size: 4305740
+  cross_validate@random_forest_mbti_by_dichotomy:
+    cmd: "python mbti_type_from_text/cli/dvc_stages/cross_validate.py --stats_per_user_path\
+      \ data/processed/stats_per_user.feather --users_mbti_feather_path data/processed/mbti_per_user.feather\
+      \ --classifier_import_path mbti_type_from_text.models.random_forest.RandomForestMBTIByDichotomyClassifier\
+      \ --classifier_config_path config/classifiers/random_forest_mbti_by_dichotomy.json\
+      \ --metrics_path metrics/random_forest_mbti_by_dichotomy.json\n"
+    deps:
+    - path: data/processed/mbti_per_user.feather
+      md5: efa91eb2d44183db44d18a69b6b7aded
+      size: 190066
+    - path: data/processed/stats_per_user.feather
+      md5: f40f8dd5a89d79b8554304e6bdc66e16
+      size: 1187450
+    - path: mbti_type_from_text/cli/dvc_stages/cross_validate.py
+      md5: 4259f003e516b33937b3566911a97ee2
+      size: 4265
+    - path: mbti_type_from_text/models/base.py
+      md5: 75282223e733c6b357a362e697725c96
+      size: 3773
+    - path: mbti_type_from_text/models/random_forest.py
+      md5: 3426345e69b731b9f351e359dc213d88
+      size: 479
+    params:
+      config/classifiers/random_forest_mbti_by_dichotomy.json:
+        hyper_parameters:
+          n_estimators: 10
+          random_state: 42
+    outs:
+    - path: metrics/random_forest_mbti_by_dichotomy.json
+      md5: 5de6fbba5e544377d07c6c1f85d00dfc
+      size: 63
+  cross_validate@random_forest_mbti_type:
+    cmd: "python mbti_type_from_text/cli/dvc_stages/cross_validate.py --stats_per_user_path\
+      \ data/processed/stats_per_user.feather --users_mbti_feather_path data/processed/mbti_per_user.feather\
+      \ --classifier_import_path mbti_type_from_text.models.random_forest.RandomForestMBTITypeClassifier\
+      \ --classifier_config_path config/classifiers/random_forest_mbti_type.json --metrics_path\
+      \ metrics/random_forest_mbti_type.json\n"
+    deps:
+    - path: data/processed/mbti_per_user.feather
+      md5: efa91eb2d44183db44d18a69b6b7aded
+      size: 190066
+    - path: data/processed/stats_per_user.feather
+      md5: f40f8dd5a89d79b8554304e6bdc66e16
+      size: 1187450
+    - path: mbti_type_from_text/cli/dvc_stages/cross_validate.py
+      md5: 4259f003e516b33937b3566911a97ee2
+      size: 4265
+    - path: mbti_type_from_text/models/base.py
+      md5: 75282223e733c6b357a362e697725c96
+      size: 3773
+    - path: mbti_type_from_text/models/random_forest.py
+      md5: 3426345e69b731b9f351e359dc213d88
+      size: 479
+    params:
+      config/classifiers/random_forest_mbti_type.json:
+        hyper_parameters:
+          n_estimators: 10
+          random_state: 42
+    outs:
+    - path: metrics/random_forest_mbti_type.json
+      md5: 307c249f8d1e9cce45659947b96f0018
+      size: 64

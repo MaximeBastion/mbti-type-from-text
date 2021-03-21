@@ -6,6 +6,8 @@ vars:
   - stats_per_user_path: data/processed/stats_per_user.feather
   - tokens_per_user_path: data/processed/tokens_per_user.feather
   - stats_per_user_umap_plot_path: plots/stats_per_user_umap.html
+  - classifiers_config_folder_path: config/classifiers
+  - metrics_folder_path: metrics
 
 stages:
   db_to_feather:
@@ -56,3 +58,31 @@ stages:
       - mbti_type_from_text/cli/dvc_stages/plot_statistics_per_user_with_umap.py
     outs:
       - ${stats_per_user_umap_plot_path}
+  cross_validate:
+    foreach:
+      random_forest_mbti_type:
+        import_path: mbti_type_from_text.models.random_forest.RandomForestMBTITypeClassifier
+        script_path: mbti_type_from_text/models/random_forest.py
+      random_forest_mbti_by_dichotomy:
+        import_path: mbti_type_from_text.models.random_forest.RandomForestMBTIByDichotomyClassifier
+        script_path: mbti_type_from_text/models/random_forest.py
+    do:
+      cmd: >
+        python mbti_type_from_text/cli/dvc_stages/cross_validate.py
+        --stats_per_user_path ${stats_per_user_path}
+        --users_mbti_feather_path ${users_mbti_feather_path}
+        --classifier_import_path ${item.import_path}
+        --classifier_config_path ${classifiers_config_folder_path}/${key}.json
+        --metrics_path ${metrics_folder_path}/${key}.json
+      deps:
+        - ${stats_per_user_path}
+        - ${users_mbti_feather_path}
+        - ${item.script_path}
+        - mbti_type_from_text/models/base.py
+        - mbti_type_from_text/cli/dvc_stages/cross_validate.py
+      params:
+        - ${classifiers_config_folder_path}/${key}.json:
+            - hyper_parameters
+      metrics:
+        - ${metrics_folder_path}/${key}.json:
+            cache: false
