@@ -9,7 +9,7 @@ from mbti_type_from_text.utils import get_object_from_string, load_json, save_js
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger(name="cross_validate_model")
+    logger = logging.getLogger(name="cross_validate")
 
     parser = ArgumentParser()
     parser.add_argument(
@@ -23,6 +23,12 @@ if __name__ == "__main__":
         type=str,
         required=True,
         help="Path to the users MBTI profiles (in the feather format)",
+    )
+    parser.add_argument(
+        "--global_config_path",
+        type=str,
+        required=True,
+        help="Path to the global JSON config file",
     )
     parser.add_argument(
         "--classifier_import_path",
@@ -49,6 +55,8 @@ if __name__ == "__main__":
     logger.info("Load users MBTI from '{}'".format(args.users_mbti_feather_path))
     users_mbti_df = pd.read_feather(args.users_mbti_feather_path)
     users_mbti_df["mbti_type"] = users_mbti_df["mbti_type"].fillna(pd.NA)
+    logger.info("Load global config file from '{}'".format(args.global_config_path))
+    global_config_dict = load_json(path=args.global_config_path)
     logger.info("Load classifier config from '{}'".format(args.classifier_config_path))
     classifier_config_dict = load_json(path=args.classifier_config_path)
 
@@ -65,7 +73,7 @@ if __name__ == "__main__":
     logger.info("Start cross-validation")
     input_features_per_user_df = stats_per_user_with_mbti_df.drop(["user_id", "mbti_type"], axis=1)
     mbti_type_per_user_df = stats_per_user_with_mbti_df["mbti_type"]
-    k_fold_splitter = KFold(n_splits=2)
+    k_fold_splitter = KFold(**global_config_dict["cross_validate"]["k_fold"])
     cross_validation_metrics_df = pd.DataFrame()
     for n, (train_indices, test_indices) in enumerate(k_fold_splitter.split(X=input_features_per_user_df)):
         logger.info("Start fold {}/{}".format(n + 1, k_fold_splitter.get_n_splits()))

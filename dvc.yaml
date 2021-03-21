@@ -6,6 +6,7 @@ vars:
   - stats_per_user_path: data/processed/stats_per_user.feather
   - tokens_per_user_path: data/processed/tokens_per_user.feather
   - stats_per_user_umap_plot_path: plots/stats_per_user_umap.html
+  - global_config_path: config/params.json
   - classifiers_config_folder_path: config/classifiers
   - metrics_folder_path: metrics
 
@@ -71,6 +72,7 @@ stages:
         python mbti_type_from_text/cli/dvc_stages/cross_validate.py
         --stats_per_user_path ${stats_per_user_path}
         --users_mbti_feather_path ${users_mbti_feather_path}
+        --global_config_path ${global_config_path}
         --classifier_import_path ${item.import_path}
         --classifier_config_path ${classifiers_config_folder_path}/${key}.json
         --metrics_path ${metrics_folder_path}/${key}.json
@@ -81,6 +83,8 @@ stages:
         - mbti_type_from_text/models/base.py
         - mbti_type_from_text/cli/dvc_stages/cross_validate.py
       params:
+        - ${global_config_path}:
+            - cross_validate
         - ${classifiers_config_folder_path}/${key}.json:
             - hyper_parameters
       metrics:

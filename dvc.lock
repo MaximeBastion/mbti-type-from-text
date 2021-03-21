@@ -75,7 +75,7 @@ stages:
   cross_validate@random_forest_mbti_by_dichotomy:
     cmd: "python mbti_type_from_text/cli/dvc_stages/cross_validate.py --stats_per_user_path\
       \ data/processed/stats_per_user.feather --users_mbti_feather_path data/processed/mbti_per_user.feather\
-      \ --classifier_import_path mbti_type_from_text.models.random_forest.RandomForestMBTIByDichotomyClassifier\
+      \ --global_config_path config/params.json --classifier_import_path mbti_type_from_text.models.random_forest.RandomForestMBTIByDichotomyClassifier\
       \ --classifier_config_path config/classifiers/random_forest_mbti_by_dichotomy.json\
       \ --metrics_path metrics/random_forest_mbti_by_dichotomy.json\n"
     deps:
@@ -86,8 +86,8 @@ stages:
       md5: f40f8dd5a89d79b8554304e6bdc66e16
       size: 1187450
     - path: mbti_type_from_text/cli/dvc_stages/cross_validate.py
-      md5: 4259f003e516b33937b3566911a97ee2
-      size: 4265
+      md5: 9a831090ba01800e071461c35fdf0d80
+      size: 4603
     - path: mbti_type_from_text/models/base.py
       md5: 75282223e733c6b357a362e697725c96
       size: 3773
@@ -99,14 +99,20 @@ stages:
         hyper_parameters:
           n_estimators: 10
           random_state: 42
+      config/params.json:
+        cross_validate:
+          k_fold:
+            n_splits: 10
+            shuffle: true
+            random_state: 42
     outs:
     - path: metrics/random_forest_mbti_by_dichotomy.json
-      md5: 5de6fbba5e544377d07c6c1f85d00dfc
-      size: 63
+      md5: eaac7b76a94fead9fef5b1f66f53649c
+      size: 65
   cross_validate@random_forest_mbti_type:
     cmd: "python mbti_type_from_text/cli/dvc_stages/cross_validate.py --stats_per_user_path\
       \ data/processed/stats_per_user.feather --users_mbti_feather_path data/processed/mbti_per_user.feather\
-      \ --classifier_import_path mbti_type_from_text.models.random_forest.RandomForestMBTITypeClassifier\
+      \ --global_config_path config/params.json --classifier_import_path mbti_type_from_text.models.random_forest.RandomForestMBTITypeClassifier\
       \ --classifier_config_path config/classifiers/random_forest_mbti_type.json --metrics_path\
       \ metrics/random_forest_mbti_type.json\n"
     deps:
@@ -117,8 +123,8 @@ stages:
       md5: f40f8dd5a89d79b8554304e6bdc66e16
       size: 1187450
     - path: mbti_type_from_text/cli/dvc_stages/cross_validate.py
-      md5: 4259f003e516b33937b3566911a97ee2
-      size: 4265
+      md5: 9a831090ba01800e071461c35fdf0d80
+      size: 4603
     - path: mbti_type_from_text/models/base.py
       md5: 75282223e733c6b357a362e697725c96
       size: 3773
@@ -130,7 +136,13 @@ stages:
         hyper_parameters:
           n_estimators: 10
           random_state: 42
+      config/params.json:
+        cross_validate:
+          k_fold:
+            n_splits: 10
+            shuffle: true
+            random_state: 42
     outs:
     - path: metrics/random_forest_mbti_type.json
-      md5: 307c249f8d1e9cce45659947b96f0018
-      size: 64
+      md5: cde358dc175fb03cee3666b498e5d17b
+      size: 65
