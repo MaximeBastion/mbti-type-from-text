@@ -38,19 +38,15 @@ stages:
       size: 134098
   compute_statistics_and_tokens_per_user:
     cmd: "python  mbti_type_from_text/cli/dvc_stages/compute_statistics_and_tokens_per_user.py\
-      \ --comments_feather_path data/processed/comments.feather --users_mbti_feather_path\
-      \ data/processed/mbti_per_user.feather --stats_per_user_path data/processed/stats_per_user.feather\
-      \ --tokens_per_user_path data/processed/tokens_per_user.feather\n"
+      \ --comments_feather_path data/processed/comments.feather --stats_per_user_path\
+      \ data/processed/stats_per_user.feather --tokens_per_user_path data/processed/tokens_per_user.feather\n"
     deps:
     - path: data/processed/comments.feather
       md5: 74de9c4e06b4ae2f7b8afbb453bc3079
       size: 18188026
-    - path: data/processed/mbti_per_user.feather
-      md5: a41483b0b957c4f6a7c1e85648df9e13
-      size: 134098
     - path: mbti_type_from_text/cli/dvc_stages/compute_statistics_and_tokens_per_user.py
-      md5: b69dc77e244e8b885b8f31e5478a5877
-      size: 9664
+      md5: 6b81c9fd4ff245921c5c6954b769aadd
+      size: 9205
     outs:
     - path: data/processed/stats_per_user.feather
       md5: 9ed575547e066b581b837ab35a6aec82

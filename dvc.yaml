@@ -36,12 +36,10 @@ stages:
     cmd: >
       python  mbti_type_from_text/cli/dvc_stages/compute_statistics_and_tokens_per_user.py
       --comments_feather_path ${comments_feather_path}
-      --users_mbti_feather_path ${users_mbti_feather_path}
       --stats_per_user_path ${stats_per_user_path}
       --tokens_per_user_path ${tokens_per_user_path}
     deps:
       - ${comments_feather_path}
-      - ${users_mbti_feather_path}
       - mbti_type_from_text/cli/dvc_stages/compute_statistics_and_tokens_per_user.py
     outs:
       - ${stats_per_user_path}
