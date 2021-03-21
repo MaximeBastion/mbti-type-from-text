@@ -71,6 +71,7 @@ stages:
       cmd: >
         python mbti_type_from_text/cli/dvc_stages/cross_validate.py
         --stats_per_user_path ${stats_per_user_path}
+        --tokens_per_user_path ${tokens_per_user_path}
         --users_mbti_feather_path ${users_mbti_feather_path}
         --global_config_path ${global_config_path}
         --classifier_import_path ${item.import_path}

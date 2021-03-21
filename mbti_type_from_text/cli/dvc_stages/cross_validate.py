@@ -19,6 +19,12 @@ if __name__ == "__main__":
         help="Path to the statistics per user (in the feather format)",
     )
     parser.add_argument(
+        "--tokens_per_user_path",
+        type=str,
+        required=True,
+        help="Path to the tokens per user (in the feather format)",
+    )
+    parser.add_argument(
         "--users_mbti_feather_path",
         type=str,
         required=True,
@@ -52,6 +58,8 @@ if __name__ == "__main__":
 
     logger.info("Load statistics per user from '{}'".format(args.stats_per_user_path))
     stats_per_user_df = pd.read_feather(args.stats_per_user_path)
+    logger.info("Load tokens per user from '{}'".format(args.tokens_per_user_path))
+    tokens_per_user_df = pd.read_feather(args.tokens_per_user_path)
     logger.info("Load users MBTI from '{}'".format(args.users_mbti_feather_path))
     users_mbti_df = pd.read_feather(args.users_mbti_feather_path)
     users_mbti_df["mbti_type"] = users_mbti_df["mbti_type"].fillna(pd.NA)
@@ -62,6 +70,9 @@ if __name__ == "__main__":
 
     logger.info("Join statistics with MBTI types")
     stats_per_user_with_mbti_df = stats_per_user_df.merge(users_mbti_df, on="user_id")
+
+    logger.info("Join statistics with tokens")
+    stats_per_user_with_mbti_df = stats_per_user_with_mbti_df.merge(tokens_per_user_df, on="user_id")
 
     logger.info("Select users with an MBTI type")
     stats_per_user_with_mbti_df = stats_per_user_with_mbti_df[~stats_per_user_with_mbti_df["mbti_type"].isna()]

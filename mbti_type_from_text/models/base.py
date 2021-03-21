@@ -31,7 +31,7 @@ class MBTITypeClassifier(MBTIBaseClassifier):
         self.classifier = self.instantiate_classifier()
 
     def prepare_X(self, input_features_per_user_df):
-        return input_features_per_user_df.values
+        return input_features_per_user_df.drop("tokens", axis=1).values
 
     def prepare_y(self, mbti_type_per_user_df):
         return self.encode_labels(mbti_type_per_user_df=mbti_type_per_user_df)
@@ -58,7 +58,7 @@ class MBTIByDichotomyClassifier(MBTIBaseClassifier):
         ]
 
     def prepare_X(self, input_features_per_user_df):
-        return input_features_per_user_df.values
+        return input_features_per_user_df.drop("tokens", axis=1).values
 
     def prepare_y(self, mbti_type_per_user_df, letter_index, letter):
         return (mbti_type_per_user_df.str[letter_index] == letter).values
