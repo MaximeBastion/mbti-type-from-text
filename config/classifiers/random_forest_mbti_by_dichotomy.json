@@ -2,5 +2,8 @@
   "hyper_parameters": {
     "n_estimators": 10,
     "random_state": 42
+  },
+  "tokens_tfidf_vectorizer": {
+    "max_features": 1000
   }
 }

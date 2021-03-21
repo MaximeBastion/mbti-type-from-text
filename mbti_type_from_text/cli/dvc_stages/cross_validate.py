@@ -94,7 +94,8 @@ if __name__ == "__main__":
         test_mbti_type_per_user_df = mbti_type_per_user_df.iloc[test_indices]
 
         classifier = get_object_from_string(string=args.classifier_import_path)(
-            hyper_parameters=classifier_config_dict["hyper_parameters"]
+            hyper_parameters=classifier_config_dict["hyper_parameters"],
+            tokens_tfidf_vectorizer_parameters=classifier_config_dict["tokens_tfidf_vectorizer"],
         )
         classifier.fit(
             input_features_per_user_df=train_input_features_per_user_df,

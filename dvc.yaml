@@ -88,6 +88,7 @@ stages:
             - cross_validate
         - ${classifiers_config_folder_path}/${key}.json:
             - hyper_parameters
+            - tokens_tfidf_vectorizer
       metrics:
         - ${metrics_folder_path}/${key}.json:
             cache: false
