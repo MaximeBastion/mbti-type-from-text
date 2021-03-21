@@ -98,10 +98,10 @@ stages:
     params:
       config/classifiers/random_forest_mbti_by_dichotomy.json:
         hyper_parameters:
-          n_estimators: 10
+          n_estimators: 100
           random_state: 42
         tokens_tfidf_vectorizer:
-          max_features: 1000
+          max_features: 10000
       config/params.json:
         cross_validate:
           k_fold:
@@ -110,8 +110,8 @@ stages:
             random_state: 42
     outs:
     - path: metrics/random_forest_mbti_by_dichotomy.json
-      md5: 07e807df7df9d1160d807cd285b38e2f
-      size: 64
+      md5: 9e48f92df67550148cf434ce35f5ab48
+      size: 65
   cross_validate@random_forest_mbti_type:
     cmd: "python mbti_type_from_text/cli/dvc_stages/cross_validate.py --stats_per_user_path\
       \ data/processed/stats_per_user.feather --tokens_per_user_path data/processed/tokens_per_user.feather\
@@ -138,10 +138,10 @@ stages:
     params:
       config/classifiers/random_forest_mbti_type.json:
         hyper_parameters:
-          n_estimators: 10
+          n_estimators: 100
           random_state: 42
         tokens_tfidf_vectorizer:
-          max_features: 1000
+          max_features: 10000
       config/params.json:
         cross_validate:
           k_fold:
@@ -150,5 +150,5 @@ stages:
             random_state: 42
     outs:
     - path: metrics/random_forest_mbti_type.json
-      md5: 7bc3b4b25ab60e5b103598afff3d243d
-      size: 65
+      md5: c920b41b08a27fb2ac1cb1689497e996
+      size: 62
