@@ -36,14 +36,14 @@ def add_dichotomies(df: pd.DataFrame, mbti_type_col: str = "mbti_type", all_8: b
     for i, letter in enumerate(primary_letters):
         df[f"is_{letter}"] = (
             df[mbti_type_col]
-            .apply(lambda mbti: pd.nan if pd.isna(mbti) else (1 if mbti[i] == letter else 0))
+            .apply(lambda mbti: pd.NA if pd.isna(mbti) else (1 if mbti[i] == letter else 0))
             .astype(pd.Int32Dtype())
         )
         if all_8:
             opposite_letter = opposite_letters[i]
             df[f"is_{opposite_letter}"] = (
                 df[f"is_{letter}"]
-                .apply(lambda boolean_as_int: pd.nan if pd.isna(boolean_as_int) else (1 if boolean_as_int == 0 else 0))
+                .apply(lambda boolean_as_int: pd.NA if pd.isna(boolean_as_int) else (1 if boolean_as_int == 0 else 0))
                 .astype(pd.Int32Dtype())
             )
 
