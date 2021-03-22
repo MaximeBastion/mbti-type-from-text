@@ -1,0 +1,9 @@
+{
+  "cross_validate": {
+    "k_fold": {
+      "n_splits": 5,
+      "shuffle": true,
+      "random_state": 42
+    }
+  }
+}

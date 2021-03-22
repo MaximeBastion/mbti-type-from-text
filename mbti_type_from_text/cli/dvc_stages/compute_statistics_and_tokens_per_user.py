@@ -173,12 +173,6 @@ if __name__ == "__main__":
         help="Path to the comments data (in the feather format)",
     )
     parser.add_argument(
-        "--users_mbti_feather_path",
-        type=str,
-        required=True,
-        help="Path to the users MBTI profiles (in the feather format)",
-    )
-    parser.add_argument(
         "--stats_per_user_path",
         type=str,
         required=True,
@@ -194,18 +188,14 @@ if __name__ == "__main__":
 
     logger.info("Load comments from '{}'".format(args.comments_feather_path))
     comments_df = pd.read_feather(args.comments_feather_path)
-    logger.info("Load users MBTI from '{}'".format(args.users_mbti_feather_path))
-    users_mbti_df = pd.read_feather(args.users_mbti_feather_path)
 
     logger.info("Group messages per user")
     messages_per_user_df = group_messages_per_user(comments_df=comments_df)
 
     logger.info("Compute simple statistics about the messages")
     messages_per_user_df = compute_simple_messages_statistics(df=messages_per_user_df)
-
-    logger.info("Map the messages to the user's MBTI type")
-    messages_per_user_df = messages_per_user_df.merge(users_mbti_df, how="left", left_index=True, right_on="user_id")
-    messages_per_user_df = messages_per_user_df[["user_id", "mbti_type", "n_messages", "character_count", "messages"]]
+    messages_per_user_df = messages_per_user_df.reset_index()
+    messages_per_user_df = messages_per_user_df[["user_id", "n_messages", "character_count", "messages"]]
 
     logger.info("Start counting and removing items")
     messages_per_user_df["messages_raw"] = messages_per_user_df["messages"]  # keeping a copy of the original messages

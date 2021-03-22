@@ -6,73 +6,149 @@ stages:
       \ data/processed/comments.feather\n"
     deps:
     - path: data/raw/reddit.db
-      md5: 1f663fe7c5d9920c814ce68c49471015
-      size: 21819392
+      md5: e6b6be1956c3fdaccf4e7b4c3d009898
+      size: 36249600
     - path: mbti_type_from_text/cli/dvc_stages/db_to_feather.py
       md5: c376ac1c3e40463d63d1b1f1ee2447b8
       size: 1949
     outs:
     - path: data/processed/comments.feather
-      md5: 74de9c4e06b4ae2f7b8afbb453bc3079
-      size: 18188026
+      md5: f3363bd691ce0a20c428ef290c85095c
+      size: 30311514
     - path: data/processed/users.feather
-      md5: 4de90b62e9178623539faf33f9f1076b
-      size: 289682
+      md5: df86bd9b7d230f510b4322d5b36ab9a8
+      size: 410938
   extract_mbti:
     cmd: "python mbti_type_from_text/cli/dvc_stages/extract_mbti.py --users_feather_path\
       \ data/processed/users.feather --comments_feather_path data/processed/comments.feather\
       \ --users_mbti_feather_path data/processed/mbti_per_user.feather\n"
     deps:
     - path: data/processed/comments.feather
-      md5: 74de9c4e06b4ae2f7b8afbb453bc3079
-      size: 18188026
+      md5: f3363bd691ce0a20c428ef290c85095c
+      size: 30311514
     - path: data/processed/users.feather
-      md5: 4de90b62e9178623539faf33f9f1076b
-      size: 289682
+      md5: df86bd9b7d230f510b4322d5b36ab9a8
+      size: 410938
     - path: mbti_type_from_text/cli/dvc_stages/extract_mbti.py
       md5: 314657b117b86325a8c1f8a32eb2109a
       size: 5458
     outs:
     - path: data/processed/mbti_per_user.feather
-      md5: a41483b0b957c4f6a7c1e85648df9e13
-      size: 134098
+      md5: efa91eb2d44183db44d18a69b6b7aded
+      size: 190066
   compute_statistics_and_tokens_per_user:
     cmd: "python  mbti_type_from_text/cli/dvc_stages/compute_statistics_and_tokens_per_user.py\
-      \ --comments_feather_path data/processed/comments.feather --users_mbti_feather_path\
-      \ data/processed/mbti_per_user.feather --stats_per_user_path data/processed/stats_per_user.feather\
-      \ --tokens_per_user_path data/processed/tokens_per_user.feather\n"
+      \ --comments_feather_path data/processed/comments.feather --stats_per_user_path\
+      \ data/processed/stats_per_user.feather --tokens_per_user_path data/processed/tokens_per_user.feather\n"
     deps:
     - path: data/processed/comments.feather
-      md5: 74de9c4e06b4ae2f7b8afbb453bc3079
-      size: 18188026
-    - path: data/processed/mbti_per_user.feather
-      md5: a41483b0b957c4f6a7c1e85648df9e13
-      size: 134098
+      md5: f3363bd691ce0a20c428ef290c85095c
+      size: 30311514
     - path: mbti_type_from_text/cli/dvc_stages/compute_statistics_and_tokens_per_user.py
-      md5: b69dc77e244e8b885b8f31e5478a5877
-      size: 9664
+      md5: 6b81c9fd4ff245921c5c6954b769aadd
+      size: 9205
     outs:
     - path: data/processed/stats_per_user.feather
-      md5: 9ed575547e066b581b837ab35a6aec82
-      size: 818450
+      md5: f40f8dd5a89d79b8554304e6bdc66e16
+      size: 1187450
     - path: data/processed/tokens_per_user.feather
-      md5: 4a9ade82dc7f462769948c43fce5c8aa
-      size: 8569066
+      md5: a4b0e9723c370455814cc3d57c506bb3
+      size: 14237578
   plot_statistics_per_user_with_umap:
     cmd: "python mbti_type_from_text/cli/dvc_stages/plot_statistics_per_user_with_umap.py\
       \ --stats_per_user_path data/processed/stats_per_user.feather --users_mbti_feather_path\
       \ data/processed/mbti_per_user.feather --plot_path plots/stats_per_user_umap.html\n"
     deps:
     - path: data/processed/mbti_per_user.feather
-      md5: a41483b0b957c4f6a7c1e85648df9e13
-      size: 134098
+      md5: efa91eb2d44183db44d18a69b6b7aded
+      size: 190066
     - path: data/processed/stats_per_user.feather
-      md5: 9ed575547e066b581b837ab35a6aec82
-      size: 818450
+      md5: f40f8dd5a89d79b8554304e6bdc66e16
+      size: 1187450
     - path: mbti_type_from_text/cli/dvc_stages/plot_statistics_per_user_with_umap.py
       md5: 1f0c7ae5f5246a1d246164ff0b0a6cf6
       size: 2340
     outs:
     - path: plots/stats_per_user_umap.html
-      md5: de8d5bd26e88dc86616150fa7a97fa7c
-      size: 4066174
+      md5: 63bf9b795d75effeff8936a5126741b8
+      size: 4305740
+  cross_validate@random_forest_mbti_by_dichotomy:
+    cmd: "python mbti_type_from_text/cli/dvc_stages/cross_validate.py --stats_per_user_path\
+      \ data/processed/stats_per_user.feather --tokens_per_user_path data/processed/tokens_per_user.feather\
+      \ --users_mbti_feather_path data/processed/mbti_per_user.feather --global_config_path\
+      \ config/params.json --classifier_import_path mbti_type_from_text.models.random_forest.RandomForestMBTIByDichotomyClassifier\
+      \ --classifier_config_path config/classifiers/random_forest_mbti_by_dichotomy.json\
+      \ --metrics_path metrics/random_forest_mbti_by_dichotomy.json\n"
+    deps:
+    - path: data/processed/mbti_per_user.feather
+      md5: efa91eb2d44183db44d18a69b6b7aded
+      size: 190066
+    - path: data/processed/stats_per_user.feather
+      md5: f40f8dd5a89d79b8554304e6bdc66e16
+      size: 1187450
+    - path: mbti_type_from_text/cli/dvc_stages/cross_validate.py
+      md5: cae27ce471bcfea59a7d59b3d4df0190
+      size: 5178
+    - path: mbti_type_from_text/models/base.py
+      md5: 193f39d7c9e0fff41d23f22709e99f6f
+      size: 4815
+    - path: mbti_type_from_text/models/random_forest.py
+      md5: 3426345e69b731b9f351e359dc213d88
+      size: 479
+    params:
+      config/classifiers/random_forest_mbti_by_dichotomy.json:
+        hyper_parameters:
+          n_estimators: 100
+          random_state: 42
+        tokens_tfidf_vectorizer:
+          max_features: 10000
+      config/params.json:
+        cross_validate:
+          k_fold:
+            n_splits: 5
+            shuffle: true
+            random_state: 42
+    outs:
+    - path: metrics/random_forest_mbti_by_dichotomy.json
+      md5: 9e48f92df67550148cf434ce35f5ab48
+      size: 65
+  cross_validate@random_forest_mbti_type:
+    cmd: "python mbti_type_from_text/cli/dvc_stages/cross_validate.py --stats_per_user_path\
+      \ data/processed/stats_per_user.feather --tokens_per_user_path data/processed/tokens_per_user.feather\
+      \ --users_mbti_feather_path data/processed/mbti_per_user.feather --global_config_path\
+      \ config/params.json --classifier_import_path mbti_type_from_text.models.random_forest.RandomForestMBTITypeClassifier\
+      \ --classifier_config_path config/classifiers/random_forest_mbti_type.json --metrics_path\
+      \ metrics/random_forest_mbti_type.json\n"
+    deps:
+    - path: data/processed/mbti_per_user.feather
+      md5: efa91eb2d44183db44d18a69b6b7aded
+      size: 190066
+    - path: data/processed/stats_per_user.feather
+      md5: f40f8dd5a89d79b8554304e6bdc66e16
+      size: 1187450
+    - path: mbti_type_from_text/cli/dvc_stages/cross_validate.py
+      md5: cae27ce471bcfea59a7d59b3d4df0190
+      size: 5178
+    - path: mbti_type_from_text/models/base.py
+      md5: 193f39d7c9e0fff41d23f22709e99f6f
+      size: 4815
+    - path: mbti_type_from_text/models/random_forest.py
+      md5: 3426345e69b731b9f351e359dc213d88
+      size: 479
+    params:
+      config/classifiers/random_forest_mbti_type.json:
+        hyper_parameters:
+          n_estimators: 100
+          random_state: 42
+        tokens_tfidf_vectorizer:
+          max_features: 10000
+      config/params.json:
+        cross_validate:
+          k_fold:
+            n_splits: 5
+            shuffle: true
+            random_state: 42
+    outs:
+    - path: metrics/random_forest_mbti_type.json
+      md5: c920b41b08a27fb2ac1cb1689497e996
+      size: 62
