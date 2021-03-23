@@ -55,10 +55,12 @@ if __name__ == "__main__":
         logger.info("Read users to treat from '{}'".format(args.user_ids_file_path))
         with open(args.user_ids_file_path, "r") as f:
             user_names = f.readlines()
+            user_names = [user_name.replace("\n", "") for user_name in user_names]
     if args.progress_file_path is not None and os.path.exists(args.progress_file_path):
         logger.info("Read users to not treat from '{}'".format(args.progress_file_path))
         with open(args.progress_file_path, "r") as f:
             already_treated_user_names = f.readlines()
+            already_treated_user_names = [user_name.replace("\n", "") for user_name in already_treated_user_names]
         user_names = [user_name for user_name in user_names if user_name not in already_treated_user_names]
 
     logger.info("Start iterating over users")
@@ -70,4 +72,4 @@ if __name__ == "__main__":
         if args.progress_file_path is not None:
             logger.debug("Write user ID to '{}'".format(args.progress_file_path))
             with open(args.progress_file_path, "a") as f:
-                f.write(user_name)
+                f.write(user_name + "\n")
