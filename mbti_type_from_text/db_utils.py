@@ -172,36 +172,42 @@ def get_all_user_names(db_connection):
 
 
 def insert_or_update_user_submissions(user, n_hot, db_connection):
-    for n, submission in enumerate(user.submissions.hot(limit=n_hot)):
-        logger.info("Submission {}/{} of user '{}'".format(n + 1, n_hot, user.name))
-        insert_or_update_comment(
-            comment_id=submission.id,
-            comment_user_id=submission.author.id,
-            parent_submission_id=submission.id,
-            parent_comment_id=None,
-            comment_title=submission.title,
-            comment_content=submission.selftext,
-            comment_created_utc=submission.created_utc,
-            comment_upvotes=submission.score,
-            subreddit_display_name=submission.subreddit.display_name,
-            submission_flair_text=submission.link_flair_text,
-            db_connection=db_connection,
-        )
+    try:
+        for n, submission in enumerate(user.submissions.hot(limit=n_hot)):
+            logger.info("Submission {}/{} of user '{}'".format(n + 1, n_hot, user.name))
+            insert_or_update_comment(
+                comment_id=submission.id,
+                comment_user_id=submission.author.id,
+                parent_submission_id=submission.id,
+                parent_comment_id=None,
+                comment_title=submission.title,
+                comment_content=submission.selftext,
+                comment_created_utc=submission.created_utc,
+                comment_upvotes=submission.score,
+                subreddit_display_name=submission.subreddit.display_name,
+                submission_flair_text=submission.link_flair_text,
+                db_connection=db_connection,
+            )
+    except NotFound:
+        logger.warning("No submission founds for user '{}'".format(user.name))
 
 
 def insert_or_update_user_comments(user, n_hot, db_connection):
-    for n, comment in enumerate(user.comments.hot(limit=n_hot)):
-        logger.info("Comment {}/{} of user '{}'".format(n + 1, n_hot, user.name))
-        insert_or_update_comment(
-            comment_id=comment.id,
-            comment_user_id=comment.author.id,
-            parent_submission_id=comment.submission.id,
-            parent_comment_id=None,
-            comment_title=None,
-            comment_content=comment.body,
-            comment_created_utc=comment.created_utc,
-            comment_upvotes=comment.score,
-            subreddit_display_name=comment.subreddit.display_name,
-            submission_flair_text=comment.submission.link_flair_text,
-            db_connection=db_connection,
-        )
+    try:
+        for n, comment in enumerate(user.comments.hot(limit=n_hot)):
+            logger.info("Comment {}/{} of user '{}'".format(n + 1, n_hot, user.name))
+            insert_or_update_comment(
+                comment_id=comment.id,
+                comment_user_id=comment.author.id,
+                parent_submission_id=comment.submission.id,
+                parent_comment_id=None,
+                comment_title=None,
+                comment_content=comment.body,
+                comment_created_utc=comment.created_utc,
+                comment_upvotes=comment.score,
+                subreddit_display_name=comment.subreddit.display_name,
+                submission_flair_text=comment.submission.link_flair_text,
+                db_connection=db_connection,
+            )
+    except NotFound:
+        logger.warning("No comments founds for user '{}'".format(user.name))
