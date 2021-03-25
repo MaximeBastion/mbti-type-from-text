@@ -1,9 +1,13 @@
 import logging
+import sys
 from argparse import ArgumentParser
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
+absolute_path_to_project_root = Path(__file__).parent.absolute().parent.parent.parent
+sys.path.append(str(absolute_path_to_project_root))  # enables running the script from a terminal
 from mbti_type_from_text.utils import add_dichotomies
 
 
@@ -65,19 +69,19 @@ if __name__ == "__main__":
     parser.add_argument(
         "--users_mbti_feather_path",
         type=str,
-        required=True,
+        required=False,
         help="Path to the users MBTI profiles (in the feather format)",
     )
     parser.add_argument(
         "--mbti_grouped_feather_path",
         type=str,
-        required=True,
+        required=False,
         help="Path to where the group by MBTI type will be saved (in the feather format)",
     )
     parser.add_argument(
         "--dichotomy_grouped_feather_path",
         type=str,
-        required=True,
+        required=False,
         help="Path to where the group by dichotomy will be saved (in the feather format)",
     )
     args = parser.parse_args()
