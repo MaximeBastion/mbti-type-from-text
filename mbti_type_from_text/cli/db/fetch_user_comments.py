@@ -25,16 +25,16 @@ if __name__ == "__main__":
         "--reddit_client_secret", type=str, required=True, help="Client secret to use with Reddit's API"
     )
     parser.add_argument(
-        "--user_ids_file_path",
+        "--user_names_file_path",
         type=str,
         required=False,
-        help="Path to a text file containing the user IDs to treat (one per line)",
+        help="Path to a text file containing the user names to treat (one per line)",
     )
     parser.add_argument(
         "--progress_file_path",
         type=str,
         required=False,
-        help="Path to a text file where the treated user IDs will be saved. They are skipped in the next executions of this command.",
+        help="Path to a text file where the treated user names will be saved. They are skipped in the next executions of this command.",
     )
     args = parser.parse_args()
 
@@ -49,11 +49,11 @@ if __name__ == "__main__":
     )
 
     logger.info("List users to treat")
-    if args.user_ids_file_path is None:
+    if args.user_names_file_path is None:
         user_names = get_all_user_names(db_connection=db_connection)
     else:
-        logger.info("Read users to treat from '{}'".format(args.user_ids_file_path))
-        with open(args.user_ids_file_path, "r") as f:
+        logger.info("Read users to treat from '{}'".format(args.user_names_file_path))
+        with open(args.user_names_file_path, "r") as f:
             user_names = f.readlines()
             user_names = [user_name.replace("\n", "") for user_name in user_names]
     if args.progress_file_path is not None and os.path.exists(args.progress_file_path):

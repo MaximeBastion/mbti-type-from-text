@@ -4,7 +4,7 @@ from datetime import datetime
 
 import pandas as pd
 from praw.models import MoreComments
-from prawcore import NotFound
+from prawcore import Forbidden, NotFound
 
 logger = logging.getLogger(name="db_utils")
 
@@ -188,8 +188,8 @@ def insert_or_update_user_submissions(user, n_hot, db_connection):
                 submission_flair_text=submission.link_flair_text,
                 db_connection=db_connection,
             )
-    except NotFound:
-        logger.warning("No submission founds for user '{}'".format(user.name))
+    except (NotFound, Forbidden):
+        logger.warning("Could not retrieve the submission of user '{}'".format(user.name))
 
 
 def insert_or_update_user_comments(user, n_hot, db_connection):
@@ -209,5 +209,5 @@ def insert_or_update_user_comments(user, n_hot, db_connection):
                 submission_flair_text=comment.submission.link_flair_text,
                 db_connection=db_connection,
             )
-    except NotFound:
-        logger.warning("No comments founds for user '{}'".format(user.name))
+    except (NotFound, Forbidden):
+        logger.warning("Could not retrieve the comments of user '{}'".format(user.name))
